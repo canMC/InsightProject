@@ -1,0 +1,15 @@
+{% extends "mybase.html" %} <!--this means that you are extending the base tempate -->
+{% block emailid %} <!-- this is the name of the block below -->
+       <div class="row" style="height:100vh;">
+                   <h4> Deals from the Expedia API for Twitter users. </h4>
+                       <form action"emailop" method="POST">
+<!-- action is the html template that will return the result to this input query -->
+                            <input type="submit" class="btn btn-lg btn-success" value="Show Deals">
+                        </form>
+                        <div class="page-header">
+                        <h2>Deals</h2>
+                        </div>
+                        
+       </div>
+
+{% endblock %}
