@@ -3,8 +3,27 @@ from flask import jsonify
 from app import app
 import itertools
 from flask import Flask, Response
-#from redis import Redis
+from redis import Redis
+import json
+import ast
 
+@app.route('/_fetch_messages')
+def fetch_messages():
+       	# get a redis connection
+    	r = Redis(host='172.31.1.44', port=6379, db=0)
+
+      #  matches = r.lpop("dealsForUsers")
+        matches = r.lrange("dealsForUsers",0,100)
+	ll = []
+	
+	if len(matches)>0:
+	  ll.append(matches[0])
+	length = len(matches)
+	while length > 0:
+          r.lpop("dealsForUsers")
+	  length = length-1
+
+	return jsonify(result=ll)
 
 @app.route('/email')
 def email():
@@ -12,28 +31,11 @@ def email():
 
 @app.route("/email", methods=['POST'])
 def email_post():
-    jsonresponse = {"name": "Milena", "text": "Tired"}
-    return render_template("emailop.html", output=jsonresponse)
-    
-    
+
+    bDeal = True
+    #jsonresponse = {"name": "Milena", "text": "Tired"}
+    return render_template("email.html", bDeal=bDeal)
+
     # if clear button pressed:
-    if 'clear' in request.form:
-        return render_template("mybase.html")
+	#TODO
 
-
-
-#emailid = request.form["emailid"]
-#jsonresponse = [{"name": "Milena", "text": "Tired"}]
-#return render_template("mybase.html", output=jsonresponse)
-
-#@app.route('/_fetch_messages')
-#def fetch_messages():
-        # get a redis connection
-        #r = redis.StrictRedis(host='172.31.1.44', port=6379, db=0)
-        #r = redis.StrictRedis(host='localhost', port=6379, db=0)
-        #p = r.pubsub()
-        #p.subscribe('dealsForUsers')
-        #p.get_message()
-        #    jsonresponse = [{"name": "Milena", "text": "Tired"}]
-#    return jsonify(result=jsonresponse)
-#render_template("mybase.html", output=jsonresponse)

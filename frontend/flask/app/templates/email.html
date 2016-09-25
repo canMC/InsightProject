@@ -6,10 +6,115 @@
 <!-- action is the html template that will return the result to this input query -->
                             <input type="submit" class="btn btn-lg btn-success" value="Show Deals">
                         </form>
+
                         <div class="page-header">
                         <h2>Deals</h2>
                         </div>
-                        
+
+
+{% if bDeal == True %}
+
+<script type="text/javascript"
+  src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">
+</script>
+<script type="text/javascript">
+  var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<script type=text/javascript>
+    $(document).ready(
+            function() {
+                setInterval(function() {
+                    var randomnumber = "hello";
+                    $.getJSON($SCRIPT_ROOT + '/_fetch_messages', {
+                          }, function(data) {
+                            var result="";
+                            for(var i=0;i<data.result.length;i++)
+                            {
+				var obj = jQuery.parseJSON( data.result[i] );
+
+                             var table = document.getElementById('resultbody');
+                              
+                              var newRow   = table.insertRow(0);
+                              
+                              // Insert a cell in the row at index 0
+                              var newCell  = newRow.insertCell(0);
+                              
+                              // Append a text node to the cell
+                              var newText  = document.createTextNode(obj.tweet.name);
+                              newCell.appendChild(newText);
+                              
+                              newCell  = newRow.insertCell(1);
+                              newText  = document.createTextNode(obj.tweet.location);
+                              newCell.appendChild(newText);
+		
+
+                              newCell  = newRow.insertCell(2);
+                              newText  = document.createTextNode(obj.tweet.text);
+                              newCell.appendChild(newText);		
+
+
+                              newCell  = newRow.insertCell(3);
+                              newText  = document.createTextNode(obj.deal.departureAirportCode);
+                              newCell.appendChild(newText);             
+
+
+                              newCell  = newRow.insertCell(4);
+                              newText  = document.createTextNode(obj.deal.arrivalAirportCode);
+                              newCell.appendChild(newText);             
+
+                              newCell  = newRow.insertCell(5);
+                              newText  = document.createTextNode(obj.deal.totalFare);
+                              newCell.appendChild(newText);             
+
+
+//var obj = jQuery.parseJSON( data.result );
+                            //    result += '<div>'+data.result[i]+'</div>';
+                            //}
+                          //  document.getElementById("result").innerHTML = result
+             //                 document.getElementById("name").innerHTML = obj.tweet.name
+	//		      document.getElementById("location").innerHTML = obj.tweet.location
+          //                    document.getElementById("text").innerHTML = obj.tweet.text
+			   }  //$("#result").text(result);
+                          });
+                }, 500);
+            });
+</script>
+
+<div id="result" align="left"></div>
+
+<div class="container">
+    <div class="starter-template">
+        <div class="row" style="height:100vh;">
+            <div class="col-md-10 col-md-offset-1">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>name</th>
+			    <th>location</th>
+                            <th>text</th>
+                            <th>depAirportCode</th>
+                            <th>arrAirportCode</th>
+                            <th>price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultbody">
+                        <tr>
+                            <td id="name"></td>
+			    <td id="location"></td>
+                            <td id="text"></td>
+                            <td id="depCode"></td>
+                            <td id="arrCode"></td>
+                            <td id="price"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+    {% endif %}
+
        </div>
 
 {% endblock %}
