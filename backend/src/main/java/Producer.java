@@ -14,7 +14,7 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 //import utils.BirdFeedConfigurations;
-import types.Deals;
+import types.Deal;
 
 
 public class Producer {

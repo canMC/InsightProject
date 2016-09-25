@@ -18,15 +18,16 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTime
 import org.apache.flink.streaming.api.functions.AssignerWithPunctuatedWatermarks
 import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks
 import org.apache.flink.streaming.api.watermark.Watermark
+import org.apache.flink.streaming.connectors.redis.common.mapper.RedisCommand
+import org.apache.flink.streaming.connectors.redis.common.mapper.RedisCommandDescription
+import org.apache.flink.streaming.connectors.redis.common.mapper.RedisMapper
+import org.apache.flink.streaming.connectors.redis.RedisSink;
+import org.apache.flink.streaming.connectors.redis.common.config.FlinkJedisPoolConfig
 
-import types.{Deals, Tweets}
-import utils.{DealsSchema, TweetsSchema}
+import types.{Tweet, Deal}
+import utils.{TweetSchema, DealSchema, FlinkRedisMapper}
 
 object KafkaFlinkConsumer extends App {
-
- case class Tweets(location: String, name:String, timestamp:Int)
- case class Deals(location: String, price: String, timestamp:Int)
-
 
  val env = StreamExecutionEnvironment.getExecutionEnvironment
  //  env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
@@ -37,36 +38,27 @@ object KafkaFlinkConsumer extends App {
  //kafkaProps.setProperty("zookeeper.connect", "ec2-52-38-52-141.us-west-2.compute.amazonaws.com:2181")
  kafkaProps.setProperty("group.id", "flink")
 
- val kafkaConsumerTwitter = new FlinkKafkaConsumer09[String](
- 	"twitter-topic",
- 	new SimpleStringSchema(),
- 	kafkaProps
- 	)
-//val kafkaConsumerTwitter = new FlinkKafkaConsumer09[Tweets](
-// 	"twitter-topic",
-// 	new TweetsSchema(),
-// 	kafkaProps
-// 	)
 
+  val kafkaConsumerTwitter = new FlinkKafkaConsumer09[Tweet](
+   	"twitter-topic",
+   	new TweetSchema(),
+   kafkaProps
+  )
 
- //val kafkaConsumerExpedia = new FlinkKafkaConsumer09[Deals](
- //	"expedia-topic",
- //	new DealsSchema(),
- //	kafkaProps
- //	)
+  val kafkaConsumerExpedia = new FlinkKafkaConsumer09[Deal](
+    "expedia-topic",
+    new DealSchema(),
+    kafkaProps
+  )
 
- val kafkaConsumerExpedia = new FlinkKafkaConsumer09[String](
- 	"expedia-topic",
- 	new SimpleStringSchema(),
- 	kafkaProps
- 	)
 
  val streamTwitter = env.addSource(kafkaConsumerTwitter)
+
  val mappedstreamTwitter = streamTwitter
- 	.map(tweet => {
-  	val split = tweet.split(",")
-  	Tweets(split(0), split(1),2)
-  	})
+ //	.map(tweet => {
+  //	val split = tweet.split(",")
+ // 	Tweets(split(0), split(1),2)
+  //	})
 
  //val mappedstreamTwitter = streamTwitter.map(tweet => (tweet, 2 ))
 
@@ -77,24 +69,26 @@ object KafkaFlinkConsumer extends App {
  val streamExpedia = env.addSource(kafkaConsumerExpedia)
  val mappedstreamExpedia = streamExpedia
  	.broadcast
- 	.map(deal => {
- 	val split = deal.split(",")
-  	Deals(split(0), split(1),2)
-  	})
+ //	.map(deal => {
+ //	val split = deal.split(",")
+  //	Deals(split(0), split(1),2)
+ // 	})
  
  //val mappedstreamExpediaT = mappedstreamExpedia.assignTimestampsAndWatermarks(new KafkaFlinkConsumer.timestampExtractorE)
  val mappedstreamExpediaT = mappedstreamExpedia
  //mappedstreamExpediaT print
 
+  val conf = new FlinkJedisPoolConfig.Builder().setHost("172.31.1.44").build()
+
  val tw = mappedstreamTwitterT.join(mappedstreamExpediaT)
  	.where(_.location)
- 	.equalTo(_.location)
+ 	.equalTo(_.departureAirportLocation)
  	//.window(TumblingEventTimeWindows.of(Time.of(3, TimeUnit.SECONDS)))
  	.window(TumblingProcessingTimeWindows.of(Time.of(3, TimeUnit.SECONDS)))
- 	.apply {(tweet: Tweets,
-		deal: Deals) => "in " + tweet.location + "->" + tweet.name + " got deal-> " + deal.price
+ 	.apply {(tweet: Tweet,
+		deal: Deal) => "{\"tweet\":" + tweet.toString() + ",\"deal\":" + deal.toString() + "}"
   		}
-	.print
+   .addSink(new RedisSink[String](conf, new FlinkRedisMapper))
 
  env.execute("KafkaFlinkConsumer")
 

@@ -11,7 +11,7 @@ public class FlinkRedisMapper implements RedisMapper<String>{
 
     @Override
     public RedisCommandDescription getCommandDescription() {
-        return new RedisCommandDescription(RedisCommand.PUBLISH, "PUBLISH_TEST");
+        return new RedisCommandDescription(RedisCommand.LPUSH, "PUBLISH_TEST");
     }
 
     @Override

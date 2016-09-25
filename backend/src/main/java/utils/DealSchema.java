@@ -4,27 +4,27 @@ import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.streaming.util.serialization.SerializationSchema;
-import types.Deals;
+import types.Deal;
 
-public class DealsSchema implements DeserializationSchema<Deals>, SerializationSchema<Deals> {
+public class DealSchema implements DeserializationSchema<Deal>, SerializationSchema<Deal> {
 
     @Override
-    public byte[] serialize(Deals deal) {
+    public byte[] serialize(Deal deal) {
         return deal.toString().getBytes();
     }
 
     @Override
-    public Deals deserialize(byte[] record) {
-        return Deals.fromString(new String(record));
+    public Deal deserialize(byte[] record) {
+        return Deal.fromString(new String(record));
     }
 
     @Override
-    public boolean isEndOfStream(Deals nextDeal) {
+    public boolean isEndOfStream(Deal nextDeal) {
         return false;
     }
 
     @Override
-    public TypeInformation<Deals> getProducedType() {
-        return TypeExtractor.getForClass(Deals.class);
+    public TypeInformation<Deal> getProducedType() {
+        return TypeExtractor.getForClass(Deal.class);
     }
 }
