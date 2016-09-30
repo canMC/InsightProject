@@ -35,6 +35,7 @@ object KafkaFlinkConsumer extends App {
 
  val kafkaProps = new Properties()
  kafkaProps.setProperty("bootstrap.servers", "ec2-52-38-52-141.us-west-2.compute.amazonaws.com:9092")
+//  kafkaProps.setProperty("bootstrap.servers", "ec2-54-70-192-13.us-west-2.compute.amazonaws.com:9092")
  //kafkaProps.setProperty("zookeeper.connect", "ec2-52-38-52-141.us-west-2.compute.amazonaws.com:2181")
  kafkaProps.setProperty("group.id", "flink")
 
@@ -55,25 +56,15 @@ object KafkaFlinkConsumer extends App {
  val streamTwitter = env.addSource(kafkaConsumerTwitter)
 
  val mappedstreamTwitter = streamTwitter
- //	.map(tweet => {
-  //	val split = tweet.split(",")
- // 	Tweets(split(0), split(1),2)
-  //	})
-
- //val mappedstreamTwitter = streamTwitter.map(tweet => (tweet, 2 ))
 
  //val mappedstreamTwitterT = mappedstreamTwitter.assignTimestampsAndWatermarks(new KafkaFlinkConsumer.timestampExtractorT)
- val mappedstreamTwitterT = mappedstreamTwitter
- mappedstreamTwitterT print
+ val mappedstreamTwitterT = mappedstreamTwitter.keyBy(_.location)
+ //mappedstreamTwitterT print
 
  val streamExpedia = env.addSource(kafkaConsumerExpedia)
  val mappedstreamExpedia = streamExpedia
  	.broadcast
- //	.map(deal => {
- //	val split = deal.split(",")
-  //	Deals(split(0), split(1),2)
- // 	})
- 
+
  //val mappedstreamExpediaT = mappedstreamExpedia.assignTimestampsAndWatermarks(new KafkaFlinkConsumer.timestampExtractorE)
  val mappedstreamExpediaT = mappedstreamExpedia
  //mappedstreamExpediaT print

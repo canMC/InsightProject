@@ -13,22 +13,15 @@ import java.util.concurrent.Executors;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-//import utils.BirdFeedConfigurations;
 import types.Deal;
 
-
+//TODO - this class is not used and only a placeholder
 public class Producer {
 
     private static KafkaProducer<String, String> producer;
     private static String[] data;
     
-    private static Random random = new Random();
-    private static int mean;
-    private static int stddev;
-    
     public static void main(String[] args) throws IOException {
-        mean = data.length/2;
-        stddev = data.length/6;
         
        };
 

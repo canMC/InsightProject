@@ -1,8 +1,8 @@
 {% extends "mybase.html" %} <!--this means that you are extending the base tempate -->
-{% block emailid %} <!-- this is the name of the block below -->
+{% block dealid %} <!-- this is the name of the block below -->
        <div class="row" style="height:100vh;">
                    <h4> Deals from the Expedia API for Twitter users. </h4>
-                       <form action"emailop" method="POST">
+                       <form action"dealop" method="POST">
 <!-- action is the html template that will return the result to this input query -->
                             <input type="submit" class="btn btn-lg btn-success" value="Show Deals">
                         </form>
@@ -65,16 +65,7 @@
                               newCell  = newRow.insertCell(5);
                               newText  = document.createTextNode(obj.deal.totalFare);
                               newCell.appendChild(newText);             
-
-
-//var obj = jQuery.parseJSON( data.result );
-                            //    result += '<div>'+data.result[i]+'</div>';
-                            //}
-                          //  document.getElementById("result").innerHTML = result
-             //                 document.getElementById("name").innerHTML = obj.tweet.name
-	//		      document.getElementById("location").innerHTML = obj.tweet.location
-          //                    document.getElementById("text").innerHTML = obj.tweet.text
-			   }  //$("#result").text(result);
+			   }  
                           });
                 }, 500);
             });

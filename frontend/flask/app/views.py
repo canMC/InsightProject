@@ -9,10 +9,9 @@ import ast
 
 @app.route('/_fetch_messages')
 def fetch_messages():
-       	# get a redis connection
+	# get a redis connection
     	r = Redis(host='172.31.1.44', port=6379, db=0)
-
-      #  matches = r.lpop("dealsForUsers")
+ 
         matches = r.lrange("dealsForUsers",0,100)
 	ll = []
 	
@@ -25,16 +24,16 @@ def fetch_messages():
 
 	return jsonify(result=ll)
 
-@app.route('/email')
-def email():
- return render_template("email.html")
+@app.route('/deal')
+def deal():
+	return render_template("deal.html")
 
-@app.route("/email", methods=['POST'])
-def email_post():
+@app.route("/deal", methods=['POST'])
+def deal_post():
 
-    bDeal = True
-    #jsonresponse = {"name": "Milena", "text": "Tired"}
-    return render_template("email.html", bDeal=bDeal)
+	bDeal = True
+
+	return render_template("deal.html", bDeal=bDeal)
 
     # if clear button pressed:
 	#TODO
