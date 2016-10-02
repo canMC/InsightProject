@@ -2,7 +2,6 @@ package types;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,7 +21,7 @@ public class Deal {
     public final Date timestamp;
 
     public Deal(String departureAirportLocation, String departureAirportCode, String arrivalAirportLocation, String arrivalAirportCode, String airlineName,
-            String departureTimeRaw, String arrivalTimeRaw, String totalFare) {
+                String departureTimeRaw, String arrivalTimeRaw, String totalFare) {
         this.departureAirportLocation = departureAirportLocation;
         this.departureAirportCode = departureAirportCode;
         this.arrivalAirportLocation = arrivalAirportLocation;
@@ -48,7 +47,7 @@ public class Deal {
         try {
             deal = gson.fromJson(record, Deal.class);
         } catch (Exception e) {
-            deal = new Deal("Error", "Error", "Error","Error", "Error", "Error", "Error", "Error");
+            deal = new Deal("Error", "Error", "Error", "Error", "Error", "Error", "Error", "Error");
         }
         return deal;
     }

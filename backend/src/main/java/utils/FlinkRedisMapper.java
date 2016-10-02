@@ -7,7 +7,7 @@ import org.apache.flink.streaming.connectors.redis.common.mapper.RedisMapper;
 /**
  * Created by milena on 9/20/16.
  */
-public class FlinkRedisMapper implements RedisMapper<String>{
+public class FlinkRedisMapper implements RedisMapper<String> {
 
     @Override
     public RedisCommandDescription getCommandDescription() {
