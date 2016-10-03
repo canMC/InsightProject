@@ -10,7 +10,7 @@ import org.apache.flink.streaming.connectors.redis.RedisSink
 import org.apache.flink.streaming.connectors.redis.common.config.FlinkJedisPoolConfig
 
 import types.{Tweet, Deal}
-import utils.{TweetSchema, DealSchema, FlinkRedisMapper}
+import utils.{TweetSchema, DealSchema, FlinkRedisMapper, ConfigurationManager}
 
 object KafkaFlinkConsumer extends App {
 
@@ -18,23 +18,22 @@ object KafkaFlinkConsumer extends App {
   val env = StreamExecutionEnvironment.getExecutionEnvironment
   env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
 
+  val config = new ConfigurationManager()
   //specify the public DNS address of one of the Kafka broker
   val kafkaProps = new Properties()
-  kafkaProps.setProperty("bootstrap.servers", "ec2-52-38-52-141.us-west-2.compute.amazonaws.com:9092")
-  //the following line can be omitted in FlinkKafkaConsumer09 version
-  //kafkaProps.setProperty("zookeeper.connect", "ec2-52-38-52-141.us-west-2.compute.amazonaws.com:2181")
-  kafkaProps.setProperty("group.id", "flink")
+  kafkaProps.setProperty("bootstrap.servers", config.get("kafka.bootstrap.servers"))
+  kafkaProps.setProperty("group.id", config.get("kafka.group.id"))
 
   //read Twitter stream from Kafka's "twitter-topic" and specify DeserializationSchema
   val kafkaConsumerTwitter = new FlinkKafkaConsumer09[Tweet](
-    "twitter-topic",
+    config.get("kafka.twitter.topic"),
     new TweetSchema(),
     kafkaProps
   )
 
   //read Expedia stream from Kafka's "expedia-topic" and specify DeserializationSchema
   val kafkaConsumerExpedia = new FlinkKafkaConsumer09[Deal](
-    "expedia-topic",
+    config.get("kafka.expedia.topic"),
     new DealSchema(),
     kafkaProps
   )
@@ -52,7 +51,7 @@ object KafkaFlinkConsumer extends App {
     .broadcast
 
   //Configure Flink to Redis connector
-  val conf = new FlinkJedisPoolConfig.Builder().setHost("172.31.1.44").build()
+  val conf = new FlinkJedisPoolConfig.Builder().setHost(config.get("redis.host")).build()
 
   //Join two streams and sink the result to Redis
   val tw = streamTwitterT.join(streamExpediaT)

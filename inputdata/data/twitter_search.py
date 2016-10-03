@@ -19,7 +19,7 @@ t = Twython(TWITTERKEYS['consumer key'], access_token=ACCESS_TOKEN)
 
 filedump = open("Twitter_dump.json", "a")
 for k in KEYWORDS:
-    file = open("Twitter_all_filtered.json", "a")
+    file = open("Twitter.json", "a")
     results = t.search(q=k, lang='eu', count=100)
     filedump.write(json.dumps(results, ensure_ascii=False))
     for res in results['statuses']:
